@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--properties配置，用于加载外部的properties配置文件-->
+    <properties resource="db.properties"></properties>
+    <!--
+        environments用于进行数据源的配置，可以配置多个数据源。
+        在开发环境，测试环境，生产环境等等不同的环境下配置多个数据源通过default属性进行多个不同数据源之间的切换
+    -->
+    <environments default="development">
+        <!--
+        environment用于配置一个独立的数据源，id用于指定数据源
+        -->
+        <environment id="development">
+            <transactionManager type="JDBC"/><!--transactionManager用于配置事务管理器，默认使用JDBC-->
+            <dataSource type="POOLED"><!--具体数据源的连接信息--><!--type="POOLED"表示当前连接使用数据库连接池-->
+                <property name="driver" value="${driver}"/><!--连接驱动-->
+                <property name="url" value="${url}"/><!--连接字符串-->
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+        <environment id="product">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+        <environment id="test">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--mapper用于配置外部的映射配置文件，在主配置文件中需要引入加载映射配置文件-->
+    <mappers>
+        <mapper resource="mapper/usersMapper.xml"/><!--引入一个具体映射文件，resource路径方式引入-->
+    </mappers>
+</configuration>

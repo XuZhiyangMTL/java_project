@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+mapper用于定义一个映射配置文件的根节点，
+其中namespace属性配置当前的命名空间，进行session级别的缓存管理。
+命名空间一般使用当前操作的实体类的全路径
+-->
+<mapper namespace="com.bloom.entity.admin.Users">
+    <!-- 类和数据表中的键一一对应时使用resultType: <select id="findUsers" resultType="com.bloom.entity.admin.Users">-->
+    <!--不一致的时候通过resultMap手动配置对应关系-->
+    <select id="findUsers" resultMap="forUsers">
+        select * from users
+        <if test="id!=null">
+            where id = #{id}
+        </if>
+    </select>
+<!--自定义映射关系集合，主要包含对于一些自定义操作的配置，比如不一致的属和字段-->
+    <resultMap id="forUsers" type="com.bloom.entity.admin.Users">
+        <!--绑定id主键-->
+        <id property="id" column="id"></id>
+        <!--
+        result配置，配置普通属性，column表示数据库中的字段，property表示实体类中的属性名称。
+        <id column="" property=""><id> id配置实体类中的主键和数据库中的主键不一致的情况
+        -->
+        <result column="username" property="name"></result>
+
+        <collection property="addresses" column="id" ofType="com.bloom.entity.admin.Address" select="getAddress"></collection>
+    </resultMap>
+    <select id="getAddress" resultType="com.bloom.entity.admin.Address">
+        select * from address where userid = #{id}
+    </select>
+
+    <sql id="user_fields">
+        username,userpass,nickname,age,gender,email,phone,createTime,updateTime,lastLogin,userstatus,remark
+    </sql>
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="id"><!--自动增长的主键赋值给id-->
+        insert into users(<include refid="user_fields"></include>)
+        values(#{name},#{userpass},#{nickname},#{age},#{gender},#{email},#{phone},#{createTime},#{updateTime},#{lastLogin},#{userStatus},#{remark})
+    </insert>
+
+    <update id="updateUser">
+        update users
+        <set>
+            <if test="name != null">username = #{name},</if>
+            <if test="userpass != null">userpass = #{userpass},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="createTime != null">createTime = #{createTime},</if>
+            <if test="updateTime != null">updateTime = #{updateTime},</if>
+            <if test="lastLogin != null">lastLogin = #{lastLogin},</if>
+            <if test="userStatus != null">userStatus = #{userStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delUser">
+        delete from users where id = #{id}
+    </delete>
+</mapper>
